@@ -39,7 +39,7 @@ def extract_tokens(text: str) -> List[str]:
 relative_folder_path = 'downloaded_pages'
 folder_path = os.path.abspath(relative_folder_path)
 
-docs = read_dir(folder_path)
+docs = map(lambda doc: parse_document(doc), read_dir(folder_path))
 
 tokens = list(set(extract_tokens(' '.join(docs))))
 
