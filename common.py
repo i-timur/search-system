@@ -25,12 +25,16 @@ def parse_document(text: str) -> str:
     soup = BeautifulSoup(text, 'html.parser')
     return soup.get_text(separator=' ')
 
-def extract_tokens(text: str) -> List[str]:
+def extract_tokens(text: str, lemmatize=False) -> List[str]:
     nltk.download('punkt')
     nltk.download('stopwords')
     words = word_tokenize(text)
     stop_words = set(stopwords.words('english'))
-    filtered_words = [word for word in words if word.isalpha() and word.lower() not in stop_words and not any(c.isdigit() for c in word)]
+    filtered_words = [word.lower() for word in words if word.isalpha() and word.lower() not in stop_words and not any(c.isdigit() for c in word)]
+
+    if lemmatize:
+        lemmatizer = nltk.stem.WordNetLemmatizer()
+        filtered_words = [lemmatizer.lemmatize(word) for word in filtered_words]
 
     return filtered_words
 
@@ -94,6 +98,7 @@ def apply_operator(operator, operands, index_size):
         return list(set(operands[0]).union(set(operands[1])))
     elif operator == 'NOT':
         return list(set(range(1, index_size + 1)).difference(set(operands[0])))
+
 def search(query, inverted_index):
     spaced_query = query.replace('(', '( ')
     spaced_query = spaced_query.replace(')', ' )')
